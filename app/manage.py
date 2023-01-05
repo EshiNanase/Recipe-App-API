@@ -21,4 +21,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-on = 1
+on=1
