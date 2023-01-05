@@ -1,4 +1,4 @@
-# GIT
+# Git
 .git
 .gitignore
 
@@ -10,7 +10,6 @@ app/__pycache__/
 app/*/__pycache__/
 app/*/*/__pycache__/
 app/*/*/*/__pycache__/
-app/*/*/*/*/__pycache__/
 
 .env/
 .venv/
