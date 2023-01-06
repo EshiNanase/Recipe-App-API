@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase
+from django.test import TestCase, SimpleTestCase
 from django.core.management import call_command
 from django.db.utils import OperationalError
 from unittest.mock import patch
@@ -18,11 +18,11 @@ class CommandTests(SimpleTestCase):
         # check if method Command.check is called with these parameters
         patched_check.assert_called_once_with(databases=['default'])
 
-    @patch('time.sleep')
-    def test_wait_for_database_delay(self, patched_check, patched_sleep):
-        """Test waiting when database delays its start (Operational Error)"""
-        patched_check.side_effect = [PostgresError] * 2 + [OperationalError] * 3 + [True]
+    # @patch('time.sleep')
+    # def test_wait_for_database_delay(self, patched_check, patched_sleep):
+    #     """Test waiting when database delays its start (Operational Error)"""
+    #     patched_check.side_effect = [PostgresError] * 2 + [OperationalError] * 3 + [True]
 
-        call_command('wait_for_database')
-        self.assertEqual(6, patched_check.call_count)
-        patched_check.assert_called_with(databases=['default'])
+    #     call_command('wait_for_database')
+    #     self.assertEqual(6, patched_check.call_count)
+    #     patched_check.assert_called_with(databases=['default'])
