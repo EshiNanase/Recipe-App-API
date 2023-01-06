@@ -20,7 +20,6 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=devpass
-
   database:
     image: postgres:13-alpine
     volumes:
