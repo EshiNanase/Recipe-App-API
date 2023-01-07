@@ -1,8 +1,6 @@
-from django.test import TestCase, SimpleTestCase
+from django.test import SimpleTestCase
 from django.core.management import call_command
-from django.db.utils import OperationalError
 from unittest.mock import patch
-from psycopg2 import OperationalError as PostgresError
 
 
 @patch('core.management.commands.wait_for_database.Command.check')
