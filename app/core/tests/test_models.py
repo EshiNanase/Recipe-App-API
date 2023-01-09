@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-import random
 
 
 class ModelTests(TestCase):
@@ -29,7 +28,7 @@ class ModelTests(TestCase):
     def test_new_user_without_email_errors(self):
         """Test creating a user will raise ValueError"""
         with self.assertRaises(ValueError):
-            user = get_user_model().objects.create_user(email='', password='123')
+            get_user_model().objects.create_user(email='', password='123')
 
     def test_create_superuser(self):
         """Test creating a superuser"""
