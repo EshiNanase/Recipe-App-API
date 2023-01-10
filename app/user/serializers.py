@@ -17,19 +17,28 @@ class UserCreateSerializer(ModelSerializer):
         """Create user with encrypted password"""
         return get_user_model().objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        """Update user"""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
+
 
 class TokenGenerateSerializer(Serializer):
     """Serializer: Generating token"""
     email = EmailField()
     password = CharField(
         style={'input_type': 'password'},
-        trim_whitespace=False
+        trim_whitespace=False,
     )
 
     def validate(self, attrs):
         """Validate and authenticate user"""
-        email = attrs.get['email']
-        password = attrs.get['password']
+        email = attrs.get('email')
+        password = attrs.get('password')
 
         user = authenticate(
             request=self.context.get('request'),
