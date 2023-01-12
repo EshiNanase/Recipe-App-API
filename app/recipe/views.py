@@ -1,9 +1,9 @@
-from rest_framework.viewsets import ModelViewSet
-from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
-from rest_framework.settings import api_settings
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework import mixins
+from recipe.serializers import RecipeSerializer, RecipeDetailSerializer, TagSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from core.models import Recipe
+from core.models import Recipe, Tag
 
 
 class RecipeViewSet(ModelViewSet):
@@ -14,12 +14,27 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
+        """Returning queryset sorted from latest created to newest"""
         return self.queryset.filter(user=self.request.user).order_by('-id')
 
     def get_serializer_class(self):
+        """Specifying serializer for action"""
         if self.action == 'list':
             return RecipeSerializer
         return self.serializer_class
 
     def perform_create(self, serializer):
+        """Serializer saving to db"""
         serializer.save(user=self.request.user)
+
+
+class TagViewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, GenericViewSet):
+    """View: Managing tag APIs"""
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """Returning Tags for a particular user"""
+        return self.queryset.filter(user=self.request.user).order_by('-id')

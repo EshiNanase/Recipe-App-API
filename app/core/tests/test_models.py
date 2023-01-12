@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from core.models import Recipe
+from core.models import Recipe, Tag
 
 
 class ModelTests(TestCase):
@@ -12,14 +12,19 @@ class ModelTests(TestCase):
             'email': 'user@exampl.com',
             'password': 'password123'
         }
-
         user = get_user_model().objects.create_user(**self.payload)
+
         self.payload_recipe = {
             'user': user,
             'name': 'Beautiful Dish',
             'time_minutes': 5,
             'price': Decimal("5.50"),
             'description': 'Wonderful Description'
+        }
+
+        self.payload_tag = {
+            'name': 'Sample Tag',
+            'user': user
         }
 
     def test_create_user_with_email(self):
@@ -62,3 +67,10 @@ class ModelTests(TestCase):
 
         recipe = Recipe.objects.filter(name=self.payload_recipe['name'])
         self.assertTrue(recipe)
+
+    def test_create_tag_success(self):
+        tag = Tag.objects.create(**self.payload_tag)
+        tag.save()
+
+        tag = Tag.objects.filter(name=self.payload_tag['name'])
+        self.assertTrue(tag)
