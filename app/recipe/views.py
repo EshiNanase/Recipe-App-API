@@ -8,7 +8,7 @@ from core.models import Recipe, Tag
 
 class RecipeViewSet(ModelViewSet):
     """View: Managing recipe APIs"""
-    serializer_class = RecipeDetailSerializer
+    serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -19,8 +19,8 @@ class RecipeViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         """Specifying serializer for action"""
-        if self.action == 'list':
-            return RecipeSerializer
+        if self.action == 'retrieve' or self.action == 'update':
+            return RecipeDetailSerializer
         return self.serializer_class
 
     def perform_create(self, serializer):
