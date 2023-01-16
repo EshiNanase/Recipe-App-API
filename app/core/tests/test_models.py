@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from core.models import Recipe, Tag
+from core.models import Recipe, Tag, Ingredient
 
 
 class ModelTests(TestCase):
@@ -24,6 +24,11 @@ class ModelTests(TestCase):
 
         self.payload_tag = {
             'name': 'Sample Tag',
+            'user': user
+        }
+
+        self.payload_ingredient = {
+            'name': 'Sample Ingredient',
             'user': user
         }
 
@@ -74,3 +79,11 @@ class ModelTests(TestCase):
 
         tag = Tag.objects.filter(name=self.payload_tag['name'])
         self.assertTrue(tag)
+
+    def test_create_ingredient_success(self):
+        """Test: Creating ingredient results in success"""
+        ingredient = Ingredient.objects.create(**self.payload_ingredient)
+        ingredient.save()
+
+        ingredient = Ingredient.objects.filter(name=self.payload_ingredient['name'])
+        self.assertTrue(ingredient)
