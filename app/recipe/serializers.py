@@ -5,6 +5,15 @@ from rest_framework.serializers import ModelSerializer
 from core.models import Recipe, Tag, Ingredient
 
 
+class ImageSerializer(ModelSerializer):
+    """Serializer: recipe-upload-image"""
+    class Meta:
+        model = Recipe
+        fields = ('id', 'image',)
+        read_only_fields = ('id',)
+        extra_kwargs = {'image': {'required': 'True'}}
+
+
 class TagSerializer(ModelSerializer):
     """Serializer: Tags-list"""
     class Meta:
