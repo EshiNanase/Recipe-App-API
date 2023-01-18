@@ -23,6 +23,9 @@ def detail_url(recipe):
 def image_upload_url(recipe_id):
     return reverse('recipe:recipe-upload-image', args=(recipe_id,))
 
+def filter_url(params):
+    return reverse('recipe:recipe-list', args=(params,))
+
 
 def create_recipe(user, **kwargs):
     default = {
@@ -308,6 +311,48 @@ class RecipePrivateAPITests(TestCase):
         recipe.refresh_from_db()
         self.assertEqual(recipe.ingredients.count(), 0)
 
+    def test_filter_recipes_by_tags_success(self):
+        """Test: Filtering recipes by tags results in success"""
+        recipe1 = create_recipe(user=self.user, name='Pasta')
+        recipe2 = create_recipe(user=self.user, name='Pizza')
+        tag1 = Tag.objects.create(user=self.user, name='Something')
+        tag2 = Tag.objects.create(user=self.user, name='Anything')
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+        recipe3 = create_recipe(user=self.user, name='Fish and Chips')
+
+        params = {'tags': f'{tag1.id}, {tag2.id}'}
+        res = self.client.get(RECIPE_URL, params)
+        self.assertEqual(res.status_code, HTTPStatus.OK)
+
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
+
+    def test_filter_recipes_by_ingredients_success(self):
+        """Test: Filtering recipes by ingredients results in success"""
+        recipe1 = create_recipe(user=self.user, name='Pasta')
+        recipe2 = create_recipe(user=self.user, name='Pizza')
+        ing1 = Ingredient.objects.create(user=self.user, name='Flour')
+        ing2 = Ingredient.objects.create(user=self.user, name='Cheese')
+        recipe1.ingredients.add(ing1)
+        recipe2.ingredients.add(ing2)
+        recipe3 = create_recipe(user=self.user, name='Fish and Chips')
+
+        params = {'ingredients': f'{ing1.id}, {ing2.id}'}
+        res = self.client.get(RECIPE_URL, params)
+        self.assertEqual(res.status_code, HTTPStatus.OK)
+
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
+
 
 class ImageUploadTest(TestCase):
     """Tests for uploading images"""
@@ -342,4 +387,5 @@ class ImageUploadTest(TestCase):
         payload = {'image': 'notimage'}
         res = self.client.post(url, payload, format='multipart')
         self.assertEqual(res.status_code, HTTPStatus.BAD_REQUEST)
+
 
